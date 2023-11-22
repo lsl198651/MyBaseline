@@ -27,10 +27,8 @@ def train_test(
         str(datetime.now().strftime("%Y-%m%d %H%M"))
     patient_error_index_path = r"./patient_error_index/" + \
         str(datetime.now().strftime("%Y-%m%d %H%M"))
-    if not os.path.exists(error_index_path):
-        os.makedirs(error_index_path)
-    if not os.path.exists(patient_error_index_path):
-        os.makedirs(patient_error_index_path)
+    os.makedirs(error_index_path, exist_ok=True)
+    os.makedirs(patient_error_index_path, exist_ok=True)
     tb_writer = SummaryWriter(
         r"./tensorboard/" + str(datetime.now().strftime("%Y-%m%d %H%M")))
     confusion_matrix_path = r"./confusion_matrix/" + \
@@ -75,8 +73,8 @@ def train_test(
         input_train = []
         target_train = []
         for data_t, label_t, index_t in train_loader:
-            data_t, label_t, padding, index_t = data_t.to(
-                device), label_t.to(device), padding.to(device), index_t.to(device)
+            data_t, label_t,  index_t = data_t.to(
+                device), label_t.to(device), index_t.to(device)
             # with autocast(device_type='cuda', dtype=torch.float16):# 这函数害人呀，慎用
             predict_t = model(data_t)
             if args.loss_type == "BCE":
@@ -120,12 +118,12 @@ def train_test(
         result_list_present = []
         test_loss = 0
         correct_v = 0
-        with torch.no_grad(set_to_none=True):
+        with torch.no_grad():
             for data_v, label_v, index_v in test_loader:
-                data_v, label_v, padding, index_v = (
+                data_v, label_v,  index_v = (
                     data_v.to(device),
                     label_v.to(device),
-                    padding.to(device),
+                    # padding.to(device),
                     index_v.to(device),
                 )
                 optimizer.zero_grad()

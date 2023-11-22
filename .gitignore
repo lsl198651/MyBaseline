@@ -3,6 +3,7 @@
 confusion_matrix
 ResultFile
 tensorboard
+patient_error_index
 .pyc
 error_index
 .vscode
