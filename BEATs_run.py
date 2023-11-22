@@ -5,7 +5,7 @@ import logging
 import numpy as np
 from torch.utils.data.sampler import WeightedRandomSampler
 from torch.utils.data import DataLoader
-from BEATs import model_segment_gru
+from BaseModel import model_segment_gru
 from util.dataloaders import get_features
 from util.dataloaders_5fold import fold5_dataloader
 from util.traintest import train_test
@@ -19,7 +19,7 @@ parser.add_argument("--learning_rate", type=float,
                     default=0.0000001, help="learning_rate for training")
 parser.add_argument("--num_epochs", type=int, default=100, help="num_epochs")
 parser.add_argument("--layers", type=int, default=3, help="layers number")
-parser.add_argument("--loss_type", type=str, default="FocalLoss",
+parser.add_argument("--loss_type", type=str, default="CE",
                     help="loss function", choices=["BCE", "CE", "FocalLoss"])
 parser.add_argument("--scheduler_flag", type=str, default=None,
                     help="the dataset used", choices=["cos", "cos_warmup"],)
@@ -59,10 +59,10 @@ if args.samplerWeight == True:
         weights, num_samples=len(weights), replacement=True
     )
     train_loader = DataLoader(DatasetClass(wavlabel=train_label, wavdata=train_features, wavidx=train_index),
-                              sampler=Data_sampler, batch_size=args.args.batch_size, drop_last=True, num_workers=4)
+                              sampler=Data_sampler, batch_size=args.args.batch_size, drop_last=True)
 else:
     train_loader = DataLoader(DatasetClass(wavlabel=train_label, wavdata=train_features, wavidx=train_index),
-                              batch_size=args.batch_size, drop_last=True, shuffle=True, pin_memory=True, num_workers=4)
+                              batch_size=args.batch_size, drop_last=True, shuffle=True, pin_memory=True)
 
 val_loader = DataLoader(
     DatasetClass(wavlabel=test_label,
